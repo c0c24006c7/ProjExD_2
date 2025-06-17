@@ -5,7 +5,7 @@ import time
 import pygame as pg
 
 
-WIDTH, HEIGHT = 1100, 650
+SCREEN_WIDTH, SCREEN_HEIGHT = 1100, 650
 DELTA = {  # 移動量辞書
     pg.K_UP: (0, -5),
     pg.K_DOWN: (0, +5),
@@ -22,15 +22,15 @@ def check_bound(rct: pg.Rect) -> tuple[bool, bool]:
     画面内ならTrue,画面外ならFalse
     """
     yoko, tate = True, True  #初期値、画面内
-    if rct.left < 0 or WIDTH < rct.right: #横方向の画面外判定
+    if rct.left < 0 or SCREEN_WIDTH < rct.right: #横方向の画面外判定
         yoko = False
-    if rct.top < 0 or HEIGHT < rct.bottom: #縦方向の画面外判定
+    if rct.top < 0 or SCREEN_HEIGHT < rct.bottom: #縦方向の画面外判定
         tate = False
     return yoko, tate #横方向,縦方向の画面内判定結果を返す
 
 def draw_gameover(screen):
     # ブラックアウト
-    blackout = pg.Surface((WIDTH, HEIGHT))
+    blackout = pg.Surface((SCREEN_WIDTH, SCREEN_HEIGHT))
     blackout.set_alpha(128)
     blackout.fill((0, 0, 0))
     screen.blit(blackout, (0, 0))
@@ -49,7 +49,7 @@ def draw_gameover(screen):
     # "Game Over" テキスト表示
     font = pg.font.SysFont(None, 80)
     txt = font.render("Game Over", True, (255, 255, 255))
-    txt_rect = txt.get_rect(center=(WIDTH // 2, HEIGHT //2))
+    txt_rect = txt.get_rect(center=(SCREEN_WIDTH // 2, SCREEN_HEIGHT //2))
     screen.blit(txt, txt_rect)
 
     pg.display.update()  # 表示を反映
@@ -57,7 +57,7 @@ def draw_gameover(screen):
 
 def main():
     pg.display.set_caption("逃げろ！こうかとん")
-    screen = pg.display.set_mode((WIDTH, HEIGHT))
+    screen = pg.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
     bg_img = pg.image.load("fig/pg_bg.jpg")    
     kk_img = pg.transform.rotozoom(pg.image.load("fig/3.png"), 0, 0.9)
     kk_rct = kk_img.get_rect()
@@ -91,8 +91,8 @@ def main():
     pg.draw.circle(bb_img,(255,0,0), (10,10), 10)#赤い円を描く
     bb_img.set_colorkey((0,0,0))
     bb_rct = bb_img.get_rect() #爆弾Rectを取得
-    bb_rct.centerx = random.randint(0, WIDTH)
-    bb_rct.centery = random.randint(0, HEIGHT)
+    bb_rct.centerx = random.randint(0, SCREEN_WIDTH)
+    bb_rct.centery = random.randint(0, SCREEN_HEIGHT)
     vx, vy = +5, +5 #爆弾の移動速度
     clock = pg.time.Clock()
     tmr = 0
