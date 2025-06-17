@@ -62,6 +62,21 @@ def main():
     kk_img = pg.transform.rotozoom(pg.image.load("fig/3.png"), 0, 0.9)
     kk_rct = kk_img.get_rect()
     kk_rct.center = 300, 200
+
+    # 向きによって画像を回転・反転で切り替える（元画像: fig/3.png）
+    base_img = pg.image.load("fig/3.png")
+    kk_imgs = {
+        (0, 0): pg.transform.rotozoom(base_img, 0, 0.9),
+        (-5, 0): pg.transform.rotozoom(base_img, 0, 0.9),
+        (-5, +5): pg.transform.rotozoom(base_img, 45, 0.9),
+        (0, +5): pg.transform.rotozoom(base_img, 90, 0.9),
+        (+5, +5): pg.transform.flip(pg.transform.rotozoom(base_img, 45, 0.9), True, False),
+        (+5, 0): pg.transform.flip(pg.transform.rotozoom(base_img, 0, 0.9), True, False),
+        (+5, -5): pg.transform.flip(pg.transform.rotozoom(base_img, -45, 0.9), True, False),
+        (0, -5): pg.transform.rotozoom(base_img, -90, 0.9),
+        (-5, -5): pg.transform.rotozoom(base_img, -45, 0.9),
+    }
+
     
     # 加速度と爆弾画像のリスト
     bb_accs = [a for a in range(1, 11)]
@@ -107,14 +122,12 @@ def main():
         kk_rct.move_ip(sum_mv)
         if check_bound(kk_rct) != (True, True):
             kk_rct.move_ip(-sum_mv[0], -sum_mv[1]) #移動をなかったことにする
+        # 移動方向に応じてこうかとんの画像を切り替え
+        mv_tuple = tuple(sum_mv)
+        if mv_tuple in kk_imgs:
+            kk_img = kk_imgs[mv_tuple]
+
         screen.blit(kk_img, kk_rct)
-        # bb_rct.move_ip(vx,vy)
-        # yoko, tate = check_bound(bb_rct)
-        # if not yoko:
-        #     vx *= -1
-        # if not tate:
-        #     vy *= -1
-        # screen.blit(bb_img, bb_rct)
         
         # 時間に応じた爆弾の加速と拡大
         index = min(tmr // 500, 9)
