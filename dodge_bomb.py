@@ -62,6 +62,16 @@ def main():
     kk_img = pg.transform.rotozoom(pg.image.load("fig/3.png"), 0, 0.9)
     kk_rct = kk_img.get_rect()
     kk_rct.center = 300, 200
+    
+    # 加速度と爆弾画像のリスト
+    bb_accs = [a for a in range(1, 11)]
+    bb_imgs = []
+    for r in range(1, 11):
+        bb_img = pg.Surface((20*r, 20*r))
+        pg.draw.circle(bb_img, (255, 0, 0), (10*r, 10*r), 10*r)
+        bb_img.set_colorkey((0, 0, 0))
+        bb_imgs.append(bb_img)
+
     bb_img = pg.Surface((20,20))#空のSurfaceを作る（爆弾用）
     pg.draw.circle(bb_img,(255,0,0), (10,10), 10)#赤い円を描く
     bb_img.set_colorkey((0,0,0))
@@ -98,13 +108,27 @@ def main():
         if check_bound(kk_rct) != (True, True):
             kk_rct.move_ip(-sum_mv[0], -sum_mv[1]) #移動をなかったことにする
         screen.blit(kk_img, kk_rct)
-        bb_rct.move_ip(vx,vy)
+        # bb_rct.move_ip(vx,vy)
+        # yoko, tate = check_bound(bb_rct)
+        # if not yoko:
+        #     vx *= -1
+        # if not tate:
+        #     vy *= -1
+        # screen.blit(bb_img, bb_rct)
+        
+        # 時間に応じた爆弾の加速と拡大
+        index = min(tmr // 500, 9)
+        avx = vx * bb_accs[index]
+        avy = vy * bb_accs[index]
+        bb_img = bb_imgs[index]
+        bb_rct.move_ip(avx, avy)
         yoko, tate = check_bound(bb_rct)
         if not yoko:
             vx *= -1
         if not tate:
             vy *= -1
         screen.blit(bb_img, bb_rct)
+
         pg.display.update()
         tmr += 1
         clock.tick(50)
